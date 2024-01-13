@@ -143,10 +143,11 @@ public final class AlgoInterpreter {
                 // in this case, we will check if there's an equal symbol in variable name's part
                 // example: x =       "Hello, World!":            String;
                 //          ^              ^                        ^
-                //   variable name     variable data              data tyype
-                if (!str.startsWith("    ")) {
+                //   variable name     variable data              data type
+                final int leadingSpaces = countLeadingSpaces(str);
+                if (leadingSpaces != 4) {
                     throw new InterpretationException("Error in line " + currentLine +
-                            ": Expected 4 white spaces");
+                            ": Expected 4 white spaces, but found " + countLeadingSpaces(str) + "\n" + str);
                 }
                 if (!str.contains(":") || !str.contains(";")) {
                     throw new InterpretationException("Error in line " + currentLine +
@@ -156,13 +157,20 @@ public final class AlgoInterpreter {
                 final String variablePart = line.split(":")[0];
                 String variableName, variableData = null;
                 if (variablePart.contains("=")) {
-                    final String[] values = variablePart.split("=");
+                    final String[] values = variablePart.split("=", 2);
                     variableName = values[0].trim();
-                    if (values[1].trim().isEmpty()) {
+                    if (values.length == 1 || values[1].trim().isEmpty()) {
                         throw new InterpretationException("Error in line " + currentLine +
                                 ": Variable is not identified\n" + str);
                     }
-                    variableData = values[1].replaceFirst("\\s{2,}", "");
+                    variableData = values[1];
+                    // Let's replace white spaces at first now.
+                    if (variableData.startsWith(" ")) {
+                        final int preSpaces = countLeadingSpaces(variableData);
+                        for (int i = 0; i < preSpaces; i++) {
+                            variableData = variableData.replaceFirst(" ", "");
+                        }
+                    }
                 } else {
                     variableName = variablePart.trim().replaceAll("\\s{2,}", "");
                 }
@@ -191,8 +199,16 @@ public final class AlgoInterpreter {
         return algorithm;
     }
 
-    public Map<String, Object> getVariables() {
-        return variables;
+    private int countLeadingSpaces(final String input) {
+        int count = 0;
+        for (char c : input.toCharArray()) {
+            if (c == ' ') {
+                count++;
+            } else {
+                break;
+            }
+        }
+        return count;
     }
 
 }

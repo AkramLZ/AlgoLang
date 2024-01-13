@@ -1,7 +1,6 @@
 Algorithm HelloWorld;
 
 Variables
-    x: Integer;
     x: String;
 
 Begin

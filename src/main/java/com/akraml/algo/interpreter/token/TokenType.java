@@ -49,10 +49,13 @@ public interface TokenType {
             if (!str.startsWith("\"") || !str.endsWith("\"")) return false;
             final String str1 = str.substring(1, str.length() - 1);
             final char[] charArray = str1.toCharArray();
-            for (int i = 0; i < charArray.length - 1; i++) {
-                if (charArray[i] == '\\' && charArray[i + 1] == '"') {
+            if (str1.startsWith("\"")) return false;
+            for (int i = 1; i < charArray.length; i++) {
+                if (charArray[i - 1] == '\\' && charArray[i] == '"') {
                     i++;
-                } else if (charArray[i] == '"') {
+                    continue;
+                }
+                if (charArray[i] == '"') {
                     return false;
                 }
             }

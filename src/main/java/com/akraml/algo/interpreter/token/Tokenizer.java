@@ -6,7 +6,7 @@ public final class Tokenizer {
                            final String variable) throws TokenizeException {
         // Check if data type is a number.
         if (variable == null) return new Object();
-        if (dataType.getTypeClass().isAssignableFrom(Number.class)) {
+        if (Number.class.isAssignableFrom(dataType.getTypeClass())) {
             switch (dataType) {
                 case DOUBLE -> {
                     if (!TokenType.DataType.DOUBLE.isValid(variable))
@@ -19,12 +19,14 @@ public final class Tokenizer {
                     return Integer.parseInt(variable);
                 }
                 case STRING -> {
-                    if (!TokenType.DataType.STRING.isValid(variable))
-                        throw new TokenizeException("Illegal string type '" + variable + "'");
-                    return variable.substring(1, variable.length() - 1).replace("\\\"", "\"");
+
                 }
             }
-        } else if (dataType == TokenType.DataType.STRING) return variable;
+        } else if (dataType == TokenType.DataType.STRING) {
+            if (!TokenType.DataType.STRING.isValid(variable))
+                throw new TokenizeException("Illegal string type '" + variable + "'");
+            return variable.substring(1, variable.length() - 1).replace("\\\"", "\"");
+        };
         return null;
     }
 
