@@ -1,0 +1,12 @@
+Algorithm HelloWorld;
+
+Variables
+    x: Integer;
+    x: String;
+
+Begin
+    Write("Hello World\n")
+    Write("Enter X: ");
+    Read(x);
+    Write("Value of X is: ", x, "\n");
+End
