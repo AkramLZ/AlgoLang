@@ -5,7 +5,7 @@ public final class Tokenizer {
     public Object tokenize(final TokenType.DataType dataType,
                            final String variable) throws TokenizeException {
         // Check if data type is a number.
-        if (variable == null) return new Object();
+        if (variable == null) return new Undefined(dataType);
         if (Number.class.isAssignableFrom(dataType.getTypeClass())) {
             switch (dataType) {
                 case DOUBLE -> {
@@ -18,14 +18,12 @@ public final class Tokenizer {
                         throw new TokenizeException("Illegal integer type '" + variable + "'");
                     return Integer.parseInt(variable);
                 }
-                case STRING -> {
-
-                }
             }
         } else if (dataType == TokenType.DataType.STRING) {
             if (!TokenType.DataType.STRING.isValid(variable))
                 throw new TokenizeException("Illegal string type '" + variable + "'");
-            return variable.substring(1, variable.length() - 1).replace("\\\"", "\"");
+            return variable.substring(1, variable.length() - 1).replace("\\\"", "\"")
+                    .replace("\\n", "\n");
         };
         return null;
     }

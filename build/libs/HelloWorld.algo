@@ -2,6 +2,20 @@ Algorithm HelloWorld;
 
 Variables
     name = "Akram": String;
+    x: Integer;
+    y: Integer;
+    a = 5.2: Real;
+    b: Real;
 
 Begin
-    Write("Hello ", name, ", How are you today?");
+    Write("Hello ", name, ", How are you today?\n");
+    Write("Please enter x: ");
+    Read(x);
+    Write("Please enter y: ");
+    Read(y);
+    Write("Value of x is ", x, "\nValue of y is ", y, "\n");
+    Write("First off, a is ", a, "\n");
+    Write("Enter a and b: ");
+    Read(a, b);
+    Write("a is ", a, " and b is ", b, "\n");
+End

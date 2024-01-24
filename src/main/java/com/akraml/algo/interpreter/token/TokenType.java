@@ -91,6 +91,13 @@ public interface TokenType {
             }
             return null;
         }
+
+        public static DataType getByClass(final Class<?> classType) {
+            for (final DataType dataType : values()) {
+                if (classType.getSimpleName().equals(dataType.getTypeClass().getSimpleName())) return dataType;
+            }
+            return null;
+        }
     }
 
 }

@@ -50,7 +50,7 @@ public final class WriteProcessor implements Processor {
                     }
                 }
             }
-            System.out.println(builder);
+            System.out.print(builder);
         };
     }
 

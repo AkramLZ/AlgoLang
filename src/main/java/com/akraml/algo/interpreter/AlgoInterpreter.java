@@ -1,6 +1,7 @@
 package com.akraml.algo.interpreter;
 
 import com.akraml.algo.interpreter.processor.Processor;
+import com.akraml.algo.interpreter.processor.ReadProcessor;
 import com.akraml.algo.interpreter.processor.WriteProcessor;
 import com.akraml.algo.interpreter.token.TokenType;
 import com.akraml.algo.interpreter.token.TokenizeException;
@@ -28,6 +29,7 @@ public final class AlgoInterpreter {
     public AlgoInterpreter(final File file) {
         this.file = file;
         processorMap.put("Write", new WriteProcessor(this));
+        processorMap.put("Read", new ReadProcessor(this));
     }
 
     public void readFile() throws FileNotFoundException {
@@ -200,6 +202,7 @@ public final class AlgoInterpreter {
         }
         // Now, interpret for begin statement.
         currentLine = 0;
+        boolean endPresent = false;
         for (final String str : fileContent) {
             currentLine++;
             if (str.equals("Begin")) {
@@ -207,6 +210,10 @@ public final class AlgoInterpreter {
                     currentLine++;
                     final String line = fileContent.get(j);
                     final int spacesCount = countLeadingSpaces(line);
+                    if (line.equalsIgnoreCase("End")) {
+                        endPresent = true;
+                        break;
+                    }
                     if (spacesCount != 4) {
                         throw new InterpretationException("Error in line " + currentLine +
                                 ": Expected 4 white spaces, but found " + countLeadingSpaces(line) + "\n" + line);
@@ -225,6 +232,10 @@ public final class AlgoInterpreter {
                 }
                 break;
             }
+        }
+        if (!endPresent) {
+            throw new InterpretationException("Algorithm has Begin body without End close\n" +
+                    "Suggestion: Add `End` keyword to the end of your algorithm");
         }
         algorithm.setVariables(variables);
         algorithm.setConstants(constants);
