@@ -37,14 +37,16 @@ public final class AlgoMain {
             System.err.println("[INTERPRETER] " + exception.getMessage());
             return;
         }
-        if (algorithm == null) { // This one should be impossible, so idc.
-            System.err.println("[CRITICAL ERROR] Algorithm is null, could be an interpretation issue?");
-            return;
-        }
-        System.out.println("[TEST] Algorithm name is " + algorithm.getName());
-        for (Map.Entry<String, Object> entry : algorithm.getVariables().entrySet()) {
-            System.out.println("[TEST] Found variable " + entry.getKey() +
-                    (entry.getValue().getClass().getSimpleName().equals("Object") ? " with no value assigned" : " with value " + entry.getValue()));
+//        System.out.println("[TEST] Algorithm name is " + algorithm.getName());
+//        for (Map.Entry<String, Object> entry : algorithm.getVariables().entrySet()) {
+//            System.out.println("[TEST] Found variable " + entry.getKey() +
+//                    (entry.getValue().getClass().getSimpleName().equals("Object") ? " with no value assigned" : " with value " + entry.getValue()));
+//        }
+        try {
+            algorithm.startExecution();
+        } catch (final Exception exception) {
+            exception.printStackTrace();
+            System.err.println("[INTERPRETER] " + exception.getMessage());
         }
     }
 

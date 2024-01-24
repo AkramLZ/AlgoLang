@@ -1,7 +1,5 @@
 package com.akraml.algo.interpreter.token;
 
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public interface TokenType {

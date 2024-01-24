@@ -1,11 +1,7 @@
 Algorithm HelloWorld;
 
 Variables
-    x: String;
+    name = "Akram": String;
 
 Begin
-    Write("Hello World\n")
-    Write("Enter X: ");
-    Read(x);
-    Write("Value of X is: ", x, "\n");
-End
+    Write("Hello ", name, ", How are you today?");

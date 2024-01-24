@@ -1,5 +1,7 @@
 package com.akraml.algo.interpreter;
 
+import com.akraml.algo.interpreter.processor.Processor;
+import com.akraml.algo.interpreter.processor.WriteProcessor;
 import com.akraml.algo.interpreter.token.TokenType;
 import com.akraml.algo.interpreter.token.TokenizeException;
 import com.akraml.algo.interpreter.token.Tokenizer;
@@ -21,9 +23,11 @@ public final class AlgoInterpreter {
     private final List<String> fileContent = new ArrayList<>();
     private final Tokenizer tokenizer = new Tokenizer();
     private final Map<String, Object> variables = new HashMap<>(), constants = new HashMap<>();
+    private final Map<String, Processor> processorMap = new HashMap<>();
 
     public AlgoInterpreter(final File file) {
         this.file = file;
+        processorMap.put("Write", new WriteProcessor(this));
     }
 
     public void readFile() throws FileNotFoundException {
@@ -118,7 +122,7 @@ public final class AlgoInterpreter {
                 throw new InterpretationException("Error in line " + currentLine +
                         ": Algorithm name should not start with a number.");
             }
-            algorithm = new Algorithm(algorithmName, variables, constants);
+            algorithm = new Algorithm(algorithmName);
             break;
         }
 
@@ -180,7 +184,6 @@ public final class AlgoInterpreter {
                             ": Variable name duplication '" + variableName + "'\n" + str);
                 }
                 final String type = line.split(":")[1].trim().replace(";", "");
-                System.out.println("[DEBUG] Found variable " + variableName + " with type " + type);
                 final TokenType.DataType dataType = TokenType.DataType.fromName(type);
                 if (dataType == null) {
                     throw new InterpretationException("Error at line " + currentLine +
@@ -195,8 +198,56 @@ public final class AlgoInterpreter {
                 }
             }
         }
+        // Now, interpret for begin statement.
+        currentLine = 0;
+        for (final String str : fileContent) {
+            currentLine++;
+            if (str.equals("Begin")) {
+                for (int j = currentLine; j < fileContent.size(); j++) {
+                    currentLine++;
+                    final String line = fileContent.get(j);
+                    final int spacesCount = countLeadingSpaces(line);
+                    if (spacesCount != 4) {
+                        throw new InterpretationException("Error in line " + currentLine +
+                                ": Expected 4 white spaces, but found " + countLeadingSpaces(line) + "\n" + line);
+                    }
+                    final String command = line.replaceFirst(" {4}", "");
+                    if (!command.endsWith(";")) {
+                        throw new InterpretationException("Error in line " + currentLine +
+                                ": Line should end with ';'\n" + line);
+                    }
+                    final Processor processor = getProcessor(command);
+                    if (processor == null) {
+                        throw new InterpretationException("Error in line " + currentLine +
+                                ": Invalid statement\n" + line);
+                    }
+                    algorithm.getCommands().put(command, processor);
+                }
+                break;
+            }
+        }
         algorithm.setVariables(variables);
+        algorithm.setConstants(constants);
         return algorithm;
+    }
+
+    public Map<String, Object> getVariables() {
+        return variables;
+    }
+
+    public Map<String, Object> getConstants() {
+        return constants;
+    }
+
+    public Tokenizer getTokenizer() {
+        return tokenizer;
+    }
+
+    public Processor getProcessor(final String command) {
+        for (final Map.Entry<String, Processor> entry : processorMap.entrySet()) {
+            if (command.trim().startsWith(entry.getKey())) return entry.getValue();
+        }
+        return null;
     }
 
     private int countLeadingSpaces(final String input) {
