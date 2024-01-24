@@ -55,8 +55,10 @@ public final class AlgoInterpreter {
                 variablesPresent = false,
                 constantsPresent = false,
                 beginPresent = false;
-        for (final String str : fileContent) {
+        for (String str : fileContent) {
             currentLine++;
+            if (str.trim().startsWith("//")) continue;
+            str = removeComments(str);
             // Identify algorithm name first.
             if (!variablesPresent && !constantsPresent && !beginPresent && !algorithmPresent) {
                 if (str.startsWith("Algorithm ")) {
@@ -104,8 +106,10 @@ public final class AlgoInterpreter {
 
         // Initialize file name.
             currentLine = 0;
-        for (final String str : fileContent) {
+        for (String str : fileContent) {
             currentLine++;
+            if (str.trim().startsWith("//")) continue;
+            str = removeComments(str);
             if (!str.trim().isEmpty() && !str.startsWith("Algorithm ")) {
                 throw new InterpretationException("Error in line " + currentLine +
                         ": The file should start with 'Algorithm <algorithm name>'");
@@ -131,8 +135,10 @@ public final class AlgoInterpreter {
         // Initialize variables now.
         currentLine = 0;
         boolean beganVariables = false;
-        for (final String str : fileContent) {
+        for (String str : fileContent) {
             currentLine++;
+            if (str.trim().startsWith("//")) continue;
+            str = removeComments(str);
             if (!beganVariables && str.equals("Variables")) {
                 beganVariables = true;
                 continue;
@@ -203,12 +209,15 @@ public final class AlgoInterpreter {
         // Now, interpret for begin statement.
         currentLine = 0;
         boolean endPresent = false;
-        for (final String str : fileContent) {
+        for (String str : fileContent) {
             currentLine++;
+            if (str.trim().startsWith("//")) continue;
+            str = removeComments(str);
             if (str.equals("Begin")) {
                 for (int j = currentLine; j < fileContent.size(); j++) {
                     currentLine++;
-                    final String line = fileContent.get(j);
+                    if (fileContent.get(j).trim().startsWith("//")) continue;
+                    final String line = removeComments(fileContent.get(j));
                     final int spacesCount = countLeadingSpaces(line);
                     if (line.equalsIgnoreCase("End")) {
                         endPresent = true;
@@ -271,6 +280,10 @@ public final class AlgoInterpreter {
             }
         }
         return count;
+    }
+
+    private final String removeComments(final String input) {
+        return input.replaceAll("//.*", "").replaceAll("\\s+$", "");
     }
 
 }

@@ -8,14 +8,19 @@ Variables
     b: Real;
 
 Begin
-    Write("Hello ", name, ", How are you today?\n");
+    // Comments should work now
+    // Testing multiple variables parse.
+    Write("Hello ", name, ", H", "ow are you today?\n");
+    // Testing basic read/write functionality
     Write("Please enter x: ");
-    Read(x);
+    Read(x); // scan x variable
     Write("Please enter y: ");
     Read(y);
     Write("Value of x is ", x, "\nValue of y is ", y, "\n");
     Write("First off, a is ", a, "\n");
+    // Testing multiple variable read functionality
     Write("Enter a and b: ");
     Read(a, b);
     Write("a is ", a, " and b is ", b, "\n");
 End
+
