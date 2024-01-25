@@ -70,10 +70,10 @@ public final class OperationProcessor implements Processor {
                 final Object storedVariable = interpreter.getVariables().get(variableName);
                 if (storedVariable instanceof Undefined undefined) {
                     if (undefined.getDataType() == TokenType.DataType.DOUBLE) {
-                        final Double dR = (Double) result;
+                        final Double dR = (Double) (result instanceof Integer ? ((Integer) result).doubleValue() : result);
                         interpreter.getVariables().replace(variableName, dR);
                     } else if (undefined.getDataType() == TokenType.DataType.INTEGER) {
-                        final Integer iR = (Integer) result;
+                        final Integer iR = (Integer) (result instanceof Double ? ((Double) result).intValue() : result);
                         interpreter.getVariables().replace(variableName, iR);
                     } else {
                         throw new RuntimeException(new InterpretationException("Wrong data type, numeric operation for " +
@@ -93,7 +93,7 @@ public final class OperationProcessor implements Processor {
                 }
             } catch (final Exception exception) {
                 exception.printStackTrace();
-                //throw new RuntimeException(new InterpretationException("Failed to eval expression\n" + s));
+                throw new RuntimeException(new InterpretationException("Failed to eval expression\n" + s));
             }
         };
     }
