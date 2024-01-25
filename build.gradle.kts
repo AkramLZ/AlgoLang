@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("com.github.johnrengelman.shadow") version("7.1.2")
 }
 
 group = "com.akraml"
@@ -10,6 +11,7 @@ repositories {
 }
 
 dependencies {
+    implementation("org.openjdk.nashorn:nashorn-core:15.4")
 }
 
 tasks.withType<Jar> {

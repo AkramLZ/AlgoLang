@@ -1,5 +1,6 @@
 package com.akraml.algo.interpreter;
 
+import com.akraml.algo.interpreter.processor.OperationProcessor;
 import com.akraml.algo.interpreter.processor.Processor;
 import com.akraml.algo.interpreter.processor.ReadProcessor;
 import com.akraml.algo.interpreter.processor.WriteProcessor;
@@ -25,6 +26,7 @@ public final class AlgoInterpreter {
     private final Tokenizer tokenizer = new Tokenizer();
     private final Map<String, Object> variables = new HashMap<>(), constants = new HashMap<>();
     private final Map<String, Processor> processorMap = new HashMap<>();
+    private final OperationProcessor operationProcessor = new OperationProcessor(this);
 
     public AlgoInterpreter(final File file) {
         this.file = file;
@@ -130,6 +132,10 @@ public final class AlgoInterpreter {
             }
             algorithm = new Algorithm(algorithmName);
             break;
+        }
+
+        if (algorithm == null) {
+            throw new InterpretationException("An unexpected error occurred when initializing the algorithm");
         }
 
         // Initialize variables now.
@@ -264,6 +270,17 @@ public final class AlgoInterpreter {
     }
 
     public Processor getProcessor(final String command) {
+        // Let's first check if it's an operation.
+
+        final String[] values = command.split("=", 2);
+        if (values.length == 2) {
+            final String variableName = values[0].trim();
+            // TODO: Handle for strings too
+            if (variables.containsKey(variableName) || constants.containsKey(variableName)) {
+                return operationProcessor;
+            }
+        }
+
         for (final Map.Entry<String, Processor> entry : processorMap.entrySet()) {
             if (command.trim().startsWith(entry.getKey())) return entry.getValue();
         }
