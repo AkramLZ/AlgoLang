@@ -1,0 +1,13 @@
+Algorithm AverageCalculator;
+
+Variables
+    x: Integer;
+    y: Integer;
+    result: Real;
+
+Begin
+    Write("Enter x and y: ");
+    Read(x, y);
+    result = (x + y) / 2;
+    Write("Result: ", result, "\n");
+End
